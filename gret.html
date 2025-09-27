@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Special Birthday Card</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background: #fff0f6;
+    margin: 30px;
+  }
+  .input-group {
+    margin: 12px 0;
+  }
+  label {
+    font-weight: bold;
+  }
+  input, textarea {
+    padding: 8px;
+    width: 300px;
+    font-size: 16px;
+  }
+  textarea {
+    resize: vertical;
+  }
+  .btn-container {
+    margin: 20px 0;
+    position: relative;
+    height: 50px;
+  }
+  #generate-btn {
+    padding: 12px 24px;
+    font-size: 18px;
+    cursor: pointer;
+    position: absolute;
+    transition: transform 0.3s ease;
+  }
+  #generate-btn.no-shift {
+    transform: translate(0, 0);
+  }
+  #generate-btn.shift-left {
+    transform: translateX(-30px);
+  }
+  #generate-btn.shift-top {
+    transform: translateY(-30px);
+  }
+  #generate-btn.shift-right {
+    transform: translateX(30px);
+  }
+  #generate-btn.shift-bottom {
+    transform: translateY(30px);
+  }
+  #generate-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+  }
+  .msg {
+    font-weight: bold;
+    margin-top: 10px;
+  }
+  .card {
+    margin-top: 40px;
+    background: #ffe6f0;
+    border-radius: 20px;
+    padding: 30px;
+    width: 400px;
+    display: inline-block;
+    box-shadow: 0 0 15px rgba(255, 105, 180, 0.6);
+    position: relative;
+  }
+  .cake-container {
+    position: relative;
+    display: inline-block;
+  }
+  .cake-image {
+    width: 200px;
+    height: auto;
+  }
+  .friend-name {
+    position: absolute;
+    width: 100%;
+    top: 18px;
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    color: #d6336c;
+    text-shadow: 1px 1px 2px white;
+  }
+  .wish-message {
+    margin-top: 20px;
+    font-size: 20px;
+    color: #900048;
+    font-style: italic;
+  }
+</style>
+</head>
+<body>
+  <h1>Special Birthday Greeting Card</h1>
+
+  <div class="input-group">
+    <label for="friend-name">Friend's Name:</label><br />
+    <input type="text" id="friend-name" placeholder="Enter friend's name" />
+  </div>
+
+  <div class="input-group">
+    <label for="wish-text">Your Birthday Wish:</label><br />
+    <textarea id="wish-text" rows="4" placeholder="Write your birthday wish here"></textarea>
+  </div>
+
+  <div class="btn-container">
+    <button id="generate-btn" disabled>Generate Card</button>
+  </div>
+
+  <div class="msg"></div>
+
+  <div id="greeting-card"></div>
+
+<script>
+  const friendNameInput = document.querySelector("#friend-name");
+  const wishTextInput = document.querySelector("#wish-text");
+  const btnContainer = document.querySelector(".btn-container");
+  const generateBtn = document.querySelector("#generate-btn");
+  const msg = document.querySelector(".msg");
+  const greetingCard = document.querySelector("#greeting-card");
+
+  generateBtn.disabled = true;
+
+  const positions = ["shift-left", "shift-top", "shift-right", "shift-bottom"];
+
+  function shiftButton() {
+    if (generateBtn.disabled) return;
+
+    const currentPosition = positions.find(dir => generateBtn.classList.contains(dir));
+    const nextPosition = positions[(positions.indexOf(currentPosition) + 1) % positions.length];
+    if (currentPosition) generateBtn.classList.remove(currentPosition);
+    generateBtn.classList.add(nextPosition);
+  }
+
+  function validateInputs() {
+    const isEmpty = friendNameInput.value.trim() === "" || wishTextInput.value.trim() === "";
+    if (isEmpty) {
+      generateBtn.disabled = true;
+      msg.style.color = "rgb(218, 49, 49)";
+      msg.innerText = "Please fill the input fields before proceeding";
+      generateBtn.classList.remove("no-shift");
+    } else {
+      generateBtn.disabled = false;
+      msg.style.color = "#006100";
+      msg.innerText = "Great! Now you can generate the card";
+      generateBtn.classList.add("no-shift");
+      positions.forEach(pos => generateBtn.classList.remove(pos));
+    }
+  }
+
+  function generateGreetingCard() {
+    const name = friendNameInput.value.trim();
+    const wish = wishTextInput.value.trim();
+    const cakeURL = "https://cdn-icons-png.flaticon.com/512/2920/2920822.png";
+
+    greetingCard.innerHTML = `
+      <div class="card">
+        <div class="cake-container">
+          <img src="${cakeURL}" alt="Birthday Cake" class="cake-image" />
+          <div class="friend-name">${name}</div>
+        </div>
+        <div class="wish-message">"${wish}"</div>
+      </div>
+    `;
+  }
+
+  btnContainer.addEventListener("mouseover", shiftButton);
+  generateBtn.addEventListener("mouseover", shiftButton);
+  friendNameInput.addEventListener("input", validateInputs);
+  wishTextInput.addEventListener("input", validateInputs);
+  generateBtn.addEventListener("click", generateGreetingCard);
+
+  validateInputs();
+</script>
+</body>
+</html>
